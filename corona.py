@@ -13,6 +13,12 @@ import requests,os,runtext,sys,time
 os.system('clear')
 url = 'https://api.kawalcorona.com/{}'
 
+def runtext(c):
+ for i in c + '\n':
+  sys.stdout.write(i)
+  sys.stdout.flush()
+  time.sleep(0.1)
+
 def provinsi():
  res = requests.get(url.format('indonesia/provinsi')).json()
  time.sleep(5)
@@ -34,6 +40,6 @@ if __name__ == '__main__':
 ▐███▌▐█▌.▐▌▐█•█▌▐█▌.▐▌██▐█▌▐█ ▪▐▌
 ·▀▀▀  ▀█▄▀▪.▀  ▀ ▀█▄▀▪▀▀ █▪ ▀  ▀ \x1b[37m0.1
 ''')
- runtext.runtext('''\x1b[37m[!] Melakukan Requests => \x1b[32;1mSukses
-\x1b[37m[!] Mengambil Data => \x1b[32;1mSukses\x1b[37m\n''',0.1)
+ runtext('''\x1b[37m[!] Melakukan Requests => \x1b[32;1mSukses
+\x1b[37m[!] Mengambil Data => \x1b[32;1mSukses\x1b[37m\n''')
  provinsi()
