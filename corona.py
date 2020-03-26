@@ -1,45 +1,71 @@
 # coding=utf-8
-
 '''
 Author : sCuby07
 Fungsi : Get Data Corona
-Versi  : 0.1
+Versi  : 0.3 (Latest Update)
 
 Jangan recode ya kontol codingan gue ga rapih
 '''
 
-import requests,os,runtext,sys,time
+import requests,os,runtext,sys,time,re
+from difflib import get_close_matches as src
 
 os.system('clear')
-url = 'https://api.kawalcorona.com/{}'
+url = 'https://{}'
 
-def runtext(c):
- for i in c + '\n':
-  sys.stdout.write(i)
-  sys.stdout.flush()
-  time.sleep(0.1)
-
-def provinsi():
- res = requests.get(url.format('indonesia/provinsi')).json()
+def indonesia():
+ res = requests.get(url.format('api.kawalcorona.com/indonesia/provinsi')).json()
  time.sleep(5)
- n = []
- for i in res:
-  n.append(i['attributes'])
- for a in n:
-  pv = a['Provinsi']
-  print('\x1b[37m[~] Provinsi : '+pv)
-  print('\x1b[37m[+] Positive : '+str(a['Kasus_Posi']))
-  print('\x1b[37m[\x1b[32;1m*\x1b[37m]\x1b[32;1m Sembuh : '+str(a['Kasus_Semb']))
-  print('\x1b[37m[\x1b[31m×\x1b[37m]\x1b[31m Meninggal : '+str(a['Kasus_Meni'])+'\x1b[37m')
+ b = requests.get(url.format('api.kawalcorona.com/indonesia')).json()
+ for x in b:
+  runtext.load('\x1b[37m[+] Positive : '+x['positif'])
+  runtext.load('\x1b[37m[\x1b[32;1m*\x1b[37m]\x1b[32;1m Recover : '+x['sembuh'])
+  runtext.load('\x1b[37m[\x1b[31m-\x1b[37m]\x1b[31m Died : '+x['meninggal'])
+  time.sleep(3)
+ ask = raw_input('\x1b[37mTampilkan Wilayah (y/n) ')
+ if 'y' in ask:
+  n = []
+  for i in res:
+   n.append(i['attributes'])
+  for a in n:
+   pv = a['Provinsi']
+   print('\x1b[37m[~] Province : '+pv)
+   print('\x1b[37m[+] Positive : '+str(a['Kasus_Posi']))
+   print('\x1b[37m[\x1b[32;1m*\x1b[37m]\x1b[32;1m Recover : '+str(a['Kasus_Semb']))
+   print('\x1b[37m[\x1b[31m-\x1b[37m]\x1b[31m Died : '+str(a['Kasus_Meni'])+'\x1b[37m')
+ if 'n' in ask:
+  exit()
 
+def all_country():
+ p = requests.get(url.format('api.kawalcorona.com')).text
+ cnt = re.findall('"Country_Region":"(.*?)"',p)
+ while True:
+  mm = raw_input('Negara : ')
+  wrl = "".join(src(mm,cnt,n=1,cutoff=0))
+  t= r'{"OBJECTID":.*?,"Country_Region":"'+wrl+'","Last_Update":.*?,"Lat":.*?,"Long_":.*?,"Confirmed":(.*?),"Deaths":(.*?),"Recovered":(.*?),"Active":.*?}}'
+  xx = re.search(t,p)
+  print('\n{} Info'.format(wrl))
+  print('''\x1b[37m[+] Positive : {}
+\x1b[37m[\x1b[32;1m*\x1b[37m]\x1b[32;1m Recover : {}
+\x1b[37m[\x1b[31m-\x1b[37m]\x1b[31m Died : {}\x1b[37m'''.format(xx.group(1),xx.group(2),xx.group(3)))
+
+def main():
+ print('''1. Indonesian Status
+2. All Country Status
+''')
+ while True:
+  nanya = int(raw_input('Country >> '))
+  if nanya == 1:
+   indonesia()
+  if nanya == 2:
+   all_country()
 
 if __name__ == '__main__':
- print('''\x1b[32;1m ▄▄·       ▄▄▄         ▐ ▄  ▄▄▄· 
-▐█ ▌▪▪     ▀▄ █·▪     •█▌▐█▐█ ▀█ 
-██ ▄▄ ▄█▀▄ ▐▀▀▄  ▄█▀▄ ▐█▐▐▌▄█▀▀█ 
+ os.system('clear')
+ print('''\x1b[32;1m ▄▄·       ▄▄▄         ▐ ▄  ▄▄▄·
+▐█ ▌▪▪     ▀▄ █·▪     •█▌▐█▐█ ▀█
+██ ▄▄ ▄█▀▄ ▐▀▀▄  ▄█▀▄ ▐█▐▐▌▄█▀▀█
 ▐███▌▐█▌.▐▌▐█•█▌▐█▌.▐▌██▐█▌▐█ ▪▐▌
-·▀▀▀  ▀█▄▀▪.▀  ▀ ▀█▄▀▪▀▀ █▪ ▀  ▀ \x1b[37m0.1
+ ▀▀▀  ▀█▄▀▪.▀  ▀ ▀█▄▀▪▀▀ █▪ ▀  ▀ \x1b[37mv0.3
 ''')
- runtext('''\x1b[37m[!] Melakukan Requests => \x1b[32;1mSukses
-\x1b[37m[!] Mengambil Data => \x1b[32;1mSukses\x1b[37m\n''')
- provinsi()
+ main()
