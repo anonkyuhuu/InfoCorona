@@ -1,5 +1,5 @@
 # InfoCorona
-Info corona di Indonesia
+Info corona di semua negara
 
 # install
 
